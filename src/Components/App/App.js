@@ -65,7 +65,7 @@ function App() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              GoSh!
+              GoSh! test
             </Typography>
             <Button color="inherit">Login</Button>
           </Toolbar>

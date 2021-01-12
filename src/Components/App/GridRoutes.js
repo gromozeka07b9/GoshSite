@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import Avatar from '@material-ui/core/Avatar';
 
 
 class GridRoutes extends React.Component {
@@ -45,10 +47,14 @@ class GridRoutes extends React.Component {
     } else {
       return (
         <div>
-          <GridList cellHeight={160} cols={3}>
+          <GridList cellHeight={260} cols={3}>
             {items.map((item) => (
               <GridListTile key={item.routeId} cols={item.cols || 1}>
-                <img src={ item.imgFilename != null && item.imgFilename != "" ? "http://igosh.pro/shared/" + item.imgFilename : "http://igosh.pro/images/icon.png"} alt={item.name} />
+
+                <img src={ item.imgFilename != null && item.imgFilename != "" ? "http://igosh.pro/shared/" + item.imgFilename : "http://igosh.pro/shared/" + item.firstImageName.replace(".jpg","_preview.jpg")} alt={item.name} />
+                                <Avatar>{item.creatorName}</Avatar>
+                <GridListTileBar title={item.name} subtitle={item.description}>
+                </GridListTileBar>
               </GridListTile>
             ))}
           </GridList>
