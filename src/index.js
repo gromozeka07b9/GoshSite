@@ -1,22 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Router } from "react-router-dom"
+import {createBrowserHistory} from 'history'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
-import App from './Components/App/App';
+import './index.css';
+
+
+import App from './Components/App/App'
 import theme from './theme';
-import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(
-  <ThemeProvider theme={theme}>
-    {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-    <CssBaseline />
-    <App />
-  </ThemeProvider>,
-  document.getElementById('root'),
+// создаём кастомную историю
+const history = createBrowserHistory()
+
+ReactDOM.render((
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Router history={history}>
+                
+                <App/>
+            </Router>            
+        </ThemeProvider>
+
+    ), document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-//reportWebVitals();
