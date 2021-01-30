@@ -12,7 +12,26 @@ import CardActions from '@material-ui/core/CardActions';
 import CardHeader from '@material-ui/core/CardHeader';
 import { Button, Paper } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
+import {
+  BrowserView,
+  MobileView,
+  isBrowser,
+  isMobile
+} from "react-device-detect";
+import * as rdd from 'react-device-detect';
 
+import {
+  Link
+} from "react-router-dom"
+
+function displayWindowSize(){
+  // Get width and height of the window excluding scrollbars
+  var w = document.documentElement.clientWidth;
+  var h = document.documentElement.clientHeight;
+  //rdd.isMobile = w < 600;
+}
+
+window.addEventListener("resize", displayWindowSize);
 
 class GridRoutes extends React.Component {
   constructor(props) {
@@ -56,7 +75,7 @@ class GridRoutes extends React.Component {
       return (
         <div>
           <Container>
-            <GridList cellHeight={400} cols={3} spacing="0">
+            <GridList cellHeight={400} cols={isMobile ? 1 : 3} spacing="0">
               {items.map((item) => (
                   <GridListTile key={item.routeId} cols={item.cols || 1}>
                     <Card>
@@ -69,7 +88,7 @@ class GridRoutes extends React.Component {
                           title={item.name}
                           subheader={item.createDate}
                       />
-                      <CardActionArea>
+                      <CardActionArea component={Link} to={"/routetimeline/" + item.id}>
                         <CardMedia
                             component="img"
                             alt={item.name}
@@ -84,7 +103,7 @@ class GridRoutes extends React.Component {
                         </CardContent>
                       </CardActionArea>
                       <CardActions disableSpacing="true">
-                        <Button size="small" color="primary" href={"/routedetail/" + item.id}>
+                        <Button size="small" color="primary" href={"/routetimeline/" + item.id}>
                           Читать
                         </Button>
                         <Button size="small" color="primary">

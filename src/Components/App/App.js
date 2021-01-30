@@ -12,6 +12,8 @@ import Home from './Home'
 import RouteDetail from './RouteDetail'
 import GridRoutes from './Home'
 import Typography from "@material-ui/core/Typography";
+import RouteTimeline from './RouteTimeline'
+
 
 class App extends Component {
     render() {
@@ -27,6 +29,7 @@ class App extends Component {
                 <Switch>
                     <Route history={history} path='/home' component={GridRoutes} />
                     <Route history={history} path='/routedetail/:routeId' component={RouteDetail} />
+                    <Route history={history} path='/routetimeline/:routeId' component={RouteTimeline} />
                     <Redirect from='/' to='/home'/>
                 </Switch>
             </div>
