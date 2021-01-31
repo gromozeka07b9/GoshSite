@@ -33,7 +33,7 @@ function displayWindowSize(){
 
 window.addEventListener("resize", displayWindowSize);
 
-class GridRoutes extends React.Component {
+class GridRoutesCards extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -121,4 +121,4 @@ class GridRoutes extends React.Component {
   }
 }
 
-export default GridRoutes;
+export default GridRoutesCards;

@@ -8,9 +8,9 @@ import {
     withRouter
 } from "react-router-dom"
 
-import Home from './Home'
 import RouteDetail from './RouteDetail'
-import GridRoutes from './Home'
+import GridRoutesCards from './Home'
+import GridRoutesImgs from './Home2'
 import Typography from "@material-ui/core/Typography";
 import RouteTimeline from './RouteTimeline'
 
@@ -21,13 +21,20 @@ class App extends Component {
 
         return (
             <div className="App">
+                <Container align="center"> 
+                    <img src="http://igosh.pro/images/icon.png" width={64} height={64}/>
+                </Container>
                 <Container>
                     <Typography variant="h4" component="h2" align="center">
                         GoSh!
                     </Typography>
+                    <Typography variant="h5" component="h2" align="center">
+                        Объединяет фотоальбом, блог и маршрут вашего путешествия
+                    </Typography>                
                 </Container>
                 <Switch>
-                    <Route history={history} path='/home' component={GridRoutes} />
+                    <Route history={history} path='/home2' component={GridRoutesCards} />
+                    <Route history={history} path='/home' component={GridRoutesImgs} /> 
                     <Route history={history} path='/routedetail/:routeId' component={RouteDetail} />
                     <Route history={history} path='/routetimeline/:routeId' component={RouteTimeline} />
                     <Redirect from='/' to='/home'/>

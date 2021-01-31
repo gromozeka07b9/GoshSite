@@ -16,6 +16,7 @@ import {
     isMobile
 } from "react-device-detect";
 
+
 class RouteTimeline extends React.Component{
     
     constructor(props) {
@@ -61,7 +62,7 @@ class RouteTimeline extends React.Component{
         const { error, isLoaded, items } = this.state;
 
         function getImgColumnCount(point) {
-            if(point.medias.length > 2){
+            if(point.medias.length > 2 && point.medias.length%2 != 0){
                 if(!firstImgs.has(point))
                 {
                     firstImgs.set(point);
@@ -72,29 +73,41 @@ class RouteTimeline extends React.Component{
             return 1;
         }
 
+        function getCellFullHeight() {
+            return isMobile ? 500 : 800;
+        }
+        function getCellImgHeight() {
+            return isMobile ? 350 : 660;
+        }
+
+        function getShortDate(createDate) {
+            var dt = new Date(createDate);
+            return dt.toLocaleDateString();
+        }
+        
         if (error) {
             return <div>Ошибка: {error.message}</div>;
         } else if (!isLoaded) {
             return <div>Загрузка...</div>;
         } else
         return (
-            <GridList cellHeight={800} cols={1} spacing="0">
+            <GridList cellHeight={getCellFullHeight()} cols={1} spacing="0">
                 {items.map((item) => (
                     <GridListTile key={item.routeId} cols={item.cols || 1}>
                         <Paper elevation={3}>
-                        <Typography variant="h3" component="h2">
+                        <Typography variant="h4" component="h2">
                           {item.name}
                         </Typography>
                         <Typography variant="h6" component="h5">
                           {item.description}
                         </Typography>     
-                        <GridList cols={item.medias.length < 2 || isMobile ? 1 : 2} cellHeight={660}>
+                        <GridList cols={item.medias.length < 2 || isMobile ? 1 : 2} cellHeight={getCellImgHeight()}>
                             {item.medias.map((imgitem) => (
                                 <GridListTile key={imgitem} cols={getImgColumnCount(item)}>
                                     <img src={imgitem.url} alt={imgitem.url} />
                                     <GridListTileBar
-                                        title="test"
-                                        subtitle={<span>by: Sergey Dyachenko</span>}
+                                        title={getShortDate(item.createDate)}
+                                        subtitle={<span>{item.address}</span>}
                                         actionIcon={
                                             <IconButton aria-label={`info about Sergey Dyachenko`}>
                                                 <InfoIcon />
