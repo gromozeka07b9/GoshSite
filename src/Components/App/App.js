@@ -13,7 +13,7 @@ import GridRoutesCards from './Home'
 import GridRoutesImgs from './Home2'
 import Typography from "@material-ui/core/Typography";
 import RouteTimeline from './RouteTimeline'
-
+import ImgGallery from './ImgGallery'
 
 class App extends Component {
     render() {
@@ -37,6 +37,7 @@ class App extends Component {
                     <Route history={history} path='/home' component={GridRoutesImgs} /> 
                     <Route history={history} path='/routedetail/:routeId' component={RouteDetail} />
                     <Route history={history} path='/routetimeline/:routeId' component={RouteTimeline} />
+                    <Route history={history} path='/imggallery' component={ImgGallery} />
                     <Redirect from='/' to='/home'/>
                 </Switch>
             </div>
