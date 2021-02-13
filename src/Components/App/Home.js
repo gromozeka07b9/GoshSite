@@ -73,7 +73,7 @@ class GridRoutesCards extends React.Component {
       return <div>Загрузка...</div>;
     } else {
       return (
-        <div>
+        <div>             
           <Container>
             <GridList cellHeight={400} cols={isMobile ? 1 : 3} spacing="0">
               {items.map((item) => (

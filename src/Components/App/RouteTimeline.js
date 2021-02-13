@@ -23,7 +23,10 @@ import {
     withLightgallery,
     useLightgallery
 } from "react-lightgallery";
+
 import * as PT from "prop-types";
+import Grid from "@material-ui/core/Grid";
+import Avatar from "@material-ui/core/Avatar";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -46,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PhotoItem = ({ image, thumb, group }) => (
-    <div style={{ maxWidth: "1200px", width: "100%", padding: "0px", margin:"0px" }}>
+    <div style={{ maxWidth: "1200px", width: "100%", padding: "0px" }}>
         <LightgalleryItem group="any" src={image} thumb={thumb}>
             <Paper elevation={5} square>
                 <img src={image} style={{ width: "100%" }} />
@@ -62,26 +65,47 @@ PhotoItem.propTypes = {
 
 class RouteTimeline extends React.Component{
 
-    onImgLoad({target:img}) {
+    /*onImgLoad({target:img}) {
         //this.setState({dimensions:{src:img.src,height:img.offsetHeight,
         //width:img.offsetWidth}});
         var imgs = this.state.dimensions.set({src:img.src,height:img.offsetHeight,
             width:img.offsetWidth})
         this.setState({dimensions:imgs});
-    }
+    }*/
 
     constructor(props) {
         super(props);
         this.state = {
             error: null,
             isLoaded: false,
+            isRouteLoaded: false,
+            route: [],
             items: [],
             dimensions: new Map()
         };
-        this.onImgLoad = this.onImgLoad.bind(this);
+        //this.onImgLoad = this.onImgLoad.bind(this);
     }
 
     componentDidMount() {
+        fetch("http://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,9]&filter={'id':'" + this.props.match.params.routeId + "'}")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isRouteLoaded: true,
+                        route: result
+                    })
+                },
+                // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
+                // чтобы не перехватывать исключения из ошибок в самих компонентах.
+                (error) => {
+                    this.setState({
+                        isRouteLoaded: true,
+                        error
+                    });
+                }
+            )
+        
         fetch("http://igosh.pro/api/v2/public/RoutePoints?pageSize=1000&range=[0,9]&filter={'routeId':'" + this.props.match.params.routeId + "'}")
             .then(res => res.json())
             .then(
@@ -105,7 +129,7 @@ class RouteTimeline extends React.Component{
     render() {
         let firstImgs = new Map();
 
-        const { error, isLoaded, items, dimensions } = this.state;
+        const { error, isLoaded, isRouteLoaded, route, items, dimensions } = this.state;
         const { classes } = this.props;
         function getImgColumnCount(point) {
             if(point.medias.length > 2 && point.medias.length%2 != 0){
@@ -119,6 +143,16 @@ class RouteTimeline extends React.Component{
             return 1;
         }
 
+        function getShortName(creatorName) {
+            var arr = creatorName.split(' ');
+            if(arr.length > 1)
+            {
+                return creatorName.substr(0,1) + arr[1].substr(0,1);
+            }
+
+            return creatorName.substr(0,1);
+        }
+        
         function getCellFullHeight() {
             return isMobile ? 500 : 800;
         }
@@ -139,34 +173,59 @@ class RouteTimeline extends React.Component{
         if (error) {
             return <div>Ошибка: {error.message}</div>;
         } else if (!isLoaded) {
-            return <div>Загрузка...</div>;
+            return <div>
+                <Container>
+                    <Typography variant="h4" component="h2" align="center">
+                        Загрузка...
+                    </Typography>
+                </Container>
+            </div>;
         } else
             return (
-                <GridList cols={1} spacing="0">
-                    {items.map((item) => (
-                        <GridListTile key={item.routeId} cols={item.cols || 1}>
-                            <Paper elevation={1}>
-                                <Typography variant="h5" component="h2">
-                                    {item.name}
-                                </Typography>
-                                <Typography variant="body1">
-                                    {item.description}
-                                </Typography>
-                                <LightgalleryProvider>
-                                    <div
-                                        style={{
-                                            display: getDisplayForImg(),
-                                            alignItems: "center",
-                                            justifyContent: "center"
-                                        }}
-                                    >
-                                        {item.medias.map((p, idx) => (
-                                            <PhotoItem key={idx} image={p.url} group="any" />
-                                        ))}
-                                    </div>
-                                </LightgalleryProvider>
-                            </Paper>
-                            {/*<GridListTileBar
+                <Container>
+                    <Grid container direction="row" spacing={0} justify="flex-start" alignItems="baseline" style={{margin: "20px"}}>
+                        <Grid item xs={1}>
+                            <Avatar className={classes.avatar}>{isRouteLoaded ? getShortName(route[0].creatorName) : ""}</Avatar>
+                        </Grid>
+                        <Grid item xs={10} alignItems="flex-start">
+                            <Typography variant="h5" align="left" style={{margin: "5px"}}>
+                                {isRouteLoaded ? route[0].name : ""}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={10}>
+                            <Typography variant="h6" align="justify" style={{margin: "5px"}}>
+                                {isRouteLoaded ? route[0].description : ""}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <GridList cols={1} spacing="0">
+                        {items.map((item) => (
+                            <GridListTile id={item.routePointId} key={item.routeId} cols={item.cols || 1}>
+                                <Container>
+                                    <Typography variant="body1" style={{margin: "10px"}}>
+                                        {getShortDate(item.createDate)}
+                                    </Typography>
+                                    <Typography variant="h6" component="h2" style={{margin: "10px"}}>
+                                        {item.name}
+                                    </Typography>
+                                    <Typography variant="body1" align="justify" style={{margin: "10px"}}>
+                                        {item.description}
+                                    </Typography>
+                                    <LightgalleryProvider>
+                                        <div
+                                            style={{
+                                                display: getDisplayForImg(),
+                                                alignItems: "center",
+                                                justifyContent: "center"
+                                            }}
+                                        >
+                                            {item.medias.map((p, idx) => (
+                                                <PhotoItem key={idx} image={p.url} group="any" />
+                                            ))}
+                                        </div>
+                                    </LightgalleryProvider>
+                                </Container>
+                                {/*<GridListTileBar
                                 title='test title'
                                 subtitle={<span>{item.name}</span>}
                                 actionIcon={
@@ -175,9 +234,17 @@ class RouteTimeline extends React.Component{
                                     </IconButton>
                                 }
                             />*/}
-                        </GridListTile>
-                    ))}
-                </GridList>
+                            </GridListTile>
+                        ))}
+                    </GridList>
+                    <Grid container direction="column" spacing={5} justify="center" alignItems="center" alignContent="center" style={{margin: "10px"}}>
+                        <Grid item xs>
+                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
+                                <img src="http://igosh.pro/playgoogle.jpg" width="200px"/>
+                            </a>
+                        </Grid>
+                    </Grid>
+                </Container>
             );
     }
 }

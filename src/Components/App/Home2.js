@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -93,6 +94,22 @@ class GridRoutesImgs extends React.Component {
 
             return (
                 <div>
+                    <Grid container spacing={0} justify="center" alignItems="center" style={{margin: "10px"}}>
+                        <Grid item xs={3} sm={1}>
+                            <img src="http://igosh.pro/logo192.png" width={64} height={64} align="right"/>
+
+                        </Grid>
+                        <Grid item xs={3} sm={1}>
+                            <Typography variant="h4" component="h2" align="center">
+                                GoSh!
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="h5" component="h2" align="center">
+                                Объединяем фотоальбом, блог и маршрут вашего путешествия!
+                            </Typography>
+                        </Grid>
+                    </Grid>
                     <Container>
                         <GridList cellHeight={260} cols={isMobile ? 1 : 3} spacing={5}>
                             {items.map((item) => (
@@ -110,11 +127,32 @@ class GridRoutesImgs extends React.Component {
                                         actionPosition="left"
                                     />
                                     
-                                    <GridListTileBar title={getShortDate(item.createDate)} subtitle={item.description} titlePosition="bottom"
+                                    <GridListTileBar title={getShortDate(item.createDate)} subtitle={<span>{item.description}</span>} titlePosition="bottom"
+                                                     actionIcon={
+                                                         <Grid container xs direction="row" spacing={0} justify="flex-end" alignItems="center" style={{marginRight: "40px"}}>
+                                                             <Grid item xs>
+                                                                 <Badge badgeContent={item.viewCount} color="primary" style={{marginRight:"0px"}}>
+                                                                     <img src="../ic_eye_1.png" width="24px"/>
+                                                                 </Badge>                                                             
+                                                             </Grid>
+                                                             <Grid item xs>
+                                                                 <Badge badgeContent={item.likeCount} color="primary" style={{marginRight: "15px"}}>
+                                                                     <img src="../ic_like_on_1.png" width="24px"/>
+                                                                 </Badge>                                                                 
+                                                             </Grid>
+                                                         </Grid>
+                                                     }
                                     />
                                 </GridListTile>
                             ))}
-                        </GridList>                        
+                        </GridList>
+                        <Grid container direction="column" spacing={5} justify="center" alignItems="center" alignContent="center" style={{margin: "10px"}}>
+                            <Grid item xs>
+                                <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
+                                    <img src="http://igosh.pro/playgoogle.jpg" width="200px"/>
+                                </a>
+                            </Grid>
+                        </Grid>
                     </Container>
                 </div>
             );

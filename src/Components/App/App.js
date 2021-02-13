@@ -21,8 +21,8 @@ class App extends Component {
 
         return (
             <div className="App">
-                <Container align="center"> 
-                    <img src="http://igosh.pro/images/icon.png" width={64} height={64}/>
+                {/*<Container align="center"> 
+                    <img src="http://igosh.pro/logo192.png" width={64} height={64}/>
                 </Container>
                 <Container>
                     <Typography variant="h4" component="h2" align="center">
@@ -31,13 +31,10 @@ class App extends Component {
                     <Typography variant="h5" component="h2" align="center">
                         Объединяет фотоальбом, блог и маршрут вашего путешествия
                     </Typography>                
-                </Container>
+                </Container>*/}
                 <Switch>
-                    <Route history={history} path='/home2' component={GridRoutesCards} />
                     <Route history={history} path='/home' component={GridRoutesImgs} /> 
-                    <Route history={history} path='/routedetail/:routeId' component={RouteDetail} />
                     <Route history={history} path='/routetimeline/:routeId' component={RouteTimeline} />
-                    <Route history={history} path='/imggallery' component={ImgGallery} />
                     <Redirect from='/' to='/home'/>
                 </Switch>
             </div>
