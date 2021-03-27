@@ -23,7 +23,7 @@ class RouteDetail extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://igosh.pro/api/v2/public/RoutePoints?pageSize=1000&range=[0,9]&filter={'routeId':'" + this.props.match.params.routeId + "'}")
+        fetch("https://igosh.pro/api/v2/public/RoutePoints?pageSize=1000&range=[0,9]&filter={'routeId':'" + this.props.match.params.routeId + "'}")
             .then(res => res.json())
             .then(
                 (result) => {

@@ -47,7 +47,7 @@ class GridRoutesImgs extends React.Component {
 
     componentDidMount() {
 
-        fetch("http://igosh.pro/api/v2/public/routes?pageSize=1000&range=%5B0%2C999%5D")
+        fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=%5B0%2C999%5D")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -94,28 +94,19 @@ class GridRoutesImgs extends React.Component {
 
             return (
                 <div>
-                    <Grid container spacing={0} justify="center" alignItems="center" style={{margin: "10px"}}>
-                        <Grid item xs={3} sm={1}>
-                            <img src="http://igosh.pro/logo192.png" width={64} height={64} align="right"/>
-
-                        </Grid>
-                        <Grid item xs={3} sm={1}>
-                            <Typography variant="h4" component="h2" align="center">
-                                GoSh!
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="h5" component="h2" align="center">
-                                Объединяем фотоальбом, блог и маршрут вашего путешествия!
-                            </Typography>
-                        </Grid>
-                    </Grid>
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <img src="https://igosh.pro/logo192.png" width={64} height={64} align="center"/>
+                        <p><h1>GoSh!</h1></p>
+                    </Box>
+                    <Box display="flex" justifyContent="center" alignItems="center" >
+                        <p align="center"><h2>Объединяем фотоальбом, блог и маршрут вашего путешествия!</h2></p>
+                    </Box>
                     <Container>
                         <GridList cellHeight={260} cols={isMobile ? 1 : 3} spacing={5}>
                             {items.map((item) => (
                                 <GridListTile key={item.routeId} cols={item.cols || 1} component={Link} to={"/routetimeline/" + item.id} params={{name:item.name}}>
 
-                                    <img src={ item.imgFilename != null && item.imgFilename != "" ? "http://igosh.pro/shared/" + item.imgFilename : "http://igosh.pro/shared/" + item.firstImageName.replace(".jpg","_preview.jpg")} alt={item.name} />
+                                    <img src={ item.imgFilename != null && item.imgFilename != "" ? "https://igosh.pro/shared/" + item.imgFilename : "https://igosh.pro/shared/" + item.firstImageName.replace(".jpg","_preview.jpg")} alt={item.name} />
 
                                     <GridListTileBar
                                         title={item.name}
@@ -146,14 +137,12 @@ class GridRoutesImgs extends React.Component {
                                 </GridListTile>
                             ))}
                         </GridList>
-                        <Grid container direction="column" spacing={5} justify="center" alignItems="center" alignContent="center" style={{margin: "10px"}}>
-                            <Grid item xs>
-                                <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
-                                    <img src="http://igosh.pro/playgoogle.jpg" width="200px"/>
-                                </a>
-                            </Grid>
-                        </Grid>
                     </Container>
+                    <Box display="flex" justifyContent="center" alignItems="center" margin="5px" >
+                        <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
+                            <img src="https://igosh.pro/playgoogle.jpg" width="200px"/>
+                        </a>
+                    </Box>
                 </div>
             );
         }

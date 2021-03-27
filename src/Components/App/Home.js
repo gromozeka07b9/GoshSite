@@ -44,7 +44,7 @@ class GridRoutesCards extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://igosh.pro/api/v2/public/routes?pageSize=1000&range=%5B0%2C999%5D")
+    fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=%5B0%2C999%5D")
       .then(res => res.json())
       .then(
         (result) => {
@@ -93,7 +93,7 @@ class GridRoutesCards extends React.Component {
                             component="img"
                             alt={item.name}
                             height="200"
-                            image={ item.imgFilename != null && item.imgFilename != "" ? "http://igosh.pro/shared/" + item.imgFilename : "http://igosh.pro/shared/" + item.firstImageName.replace(".jpg","_preview.jpg")}
+                            image={ item.imgFilename != null && item.imgFilename != "" ? "https://igosh.pro/shared/" + item.imgFilename : "https://igosh.pro/shared/" + item.firstImageName.replace(".jpg","_preview.jpg")}
                             title={item.name}
                         />
                         <CardContent>

@@ -27,6 +27,8 @@ import {
 import * as PT from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
+import Box from "@material-ui/core/Box";
+import {Helmet} from "react-helmet";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -87,7 +89,7 @@ class RouteTimeline extends React.Component{
     }
 
     componentDidMount() {
-        fetch("http://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,9]&filter={'id':'" + this.props.match.params.routeId + "'}")
+        fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,9]&filter={'id':'" + this.props.match.params.routeId + "'}")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -106,7 +108,7 @@ class RouteTimeline extends React.Component{
                 }
             )
         
-        fetch("http://igosh.pro/api/v2/public/RoutePoints?pageSize=1000&range=[0,9]&filter={'routeId':'" + this.props.match.params.routeId + "'}")
+        fetch("https://igosh.pro/api/v2/public/RoutePoints?pageSize=1000&range=[0,9]&filter={'routeId':'" + this.props.match.params.routeId + "'}")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -182,31 +184,34 @@ class RouteTimeline extends React.Component{
             </div>;
         } else
             return (
+                <div>
+                    {/*<MetaTags>
+                    <title>{isRouteLoaded ? route[0].name : "GoSh!"}</title>
+                    <meta id="og-image" property="og:image" content="path/to/image.jpg" />
+                </MetaTags>*/}
+                    {/*<Helmet>
+                    <meta charSet="utf-8" />
+                    <title>My Title</title>
+                    <link rel="canonical" href="http://mysite.com/example" />
+                </Helmet>*/}                
                 <Container>
-                    <Grid container direction="row" spacing={0} justify="flex-start" alignItems="baseline" style={{margin: "20px"}}>
-                        <Grid item xs={1}>
-                            <Avatar className={classes.avatar}>{isRouteLoaded ? getShortName(route[0].creatorName) : ""}</Avatar>
-                        </Grid>
-                        <Grid item xs={10} alignItems="flex-start">
-                            <Typography variant="h5" align="left" style={{margin: "5px"}}>
-                                {isRouteLoaded ? route[0].name : ""}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={10}>
-                            <Typography variant="h6" align="justify" style={{margin: "5px"}}>
-                                {isRouteLoaded ? route[0].description : ""}
-                            </Typography>
-                        </Grid>
-                    </Grid>
+                    <Box display="flex" justifyContent="center" alignItems="center" margin="5px">
+                        <Avatar className={classes.avatar}>{isRouteLoaded ? getShortName(route[0].creatorName) : ""}</Avatar>
+                        <Typography variant="h5" align="center" style={{margin: "5px"}}>
+                            {isRouteLoaded ? route[0].name : ""}
+                        </Typography>
+                    </Box>
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <Typography variant="subtitle1" align="center" style={{margin: "5px"}}>
+                            {isRouteLoaded ? route[0].description : ""}
+                        </Typography>
+                    </Box>
                     <GridList cols={1} spacing="0">
                         {items.map((item) => (
                             <GridListTile id={item.routePointId} key={item.routeId} cols={item.cols || 1}>
                                 <Container>
                                     <Typography variant="body1" style={{margin: "10px"}}>
-                                        {getShortDate(item.createDate)}
-                                    </Typography>
-                                    <Typography variant="h6" component="h2" style={{margin: "10px"}}>
-                                        {item.name}
+                                        {getShortDate(item.createDate)} {item.name}
                                     </Typography>
                                     <Typography variant="body1" align="justify" style={{margin: "10px"}}>
                                         {item.description}
@@ -237,14 +242,13 @@ class RouteTimeline extends React.Component{
                             </GridListTile>
                         ))}
                     </GridList>
-                    <Grid container direction="column" spacing={5} justify="center" alignItems="center" alignContent="center" style={{margin: "10px"}}>
-                        <Grid item xs>
-                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
-                                <img src="http://igosh.pro/playgoogle.jpg" width="200px"/>
-                            </a>
-                        </Grid>
-                    </Grid>
+                    <Box display="flex" justifyContent="center" alignItems="center" margin="5px" >
+                        <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
+                            <img src="https://igosh.pro/playgoogle.jpg" width="200px"/>
+                        </a>
+                    </Box>
                 </Container>
+                </div>
             );
     }
 }
