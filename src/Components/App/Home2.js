@@ -4,16 +4,17 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import Avatar from '@material-ui/core/Avatar';
-import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
-import CardContent from '@material-ui/core/CardContent';
-import IconButton from '@material-ui/core/IconButton';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import {Link} from "react-router-dom";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import Box from '@material-ui/core/Box';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Typography from "@material-ui/core/Typography";
 import Container from '@material-ui/core/Container';
 import {
     BrowserView,
@@ -94,6 +95,16 @@ class GridRoutesImgs extends React.Component {
 
             return (
                 <div>
+                    {/*<AppBar position={"static"}>
+                        <Toolbar>
+                            <IconButton edge={"start"} aria-label="menu">
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography variant="h6" className={classes.title}>
+                                GoSh!
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>*/}
                     <Box display="flex" justifyContent="center" alignItems="center">
                         <img src="https://igosh.pro/logo192.png" width={64} height={64} align="center"/>
                         <p><h1>GoSh!</h1></p>
@@ -123,12 +134,12 @@ class GridRoutesImgs extends React.Component {
                                                          <Grid container xs direction="row" spacing={0} justify="flex-end" alignItems="center" style={{marginRight: "40px"}}>
                                                              <Grid item xs>
                                                                  <Badge badgeContent={item.viewCount} color="primary" style={{marginRight:"0px"}}>
-                                                                     <img src="../ic_eye_1.png" width="24px"/>
+                                                                     <img src="../ic_eye_1.png" width="24px" height="24px"/>
                                                                  </Badge>                                                             
                                                              </Grid>
                                                              <Grid item xs>
                                                                  <Badge badgeContent={item.likeCount} color="primary" style={{marginRight: "15px"}}>
-                                                                     <img src="../ic_like_on_1.png" width="24px"/>
+                                                                     <img src="../ic_like_on_1.png" width="24px" height="24px"/>
                                                                  </Badge>                                                                 
                                                              </Grid>
                                                          </Grid>
