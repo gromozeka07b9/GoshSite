@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Container from '@material-ui/core/Container';
 
 import {
     Route,
@@ -8,10 +7,7 @@ import {
     withRouter
 } from "react-router-dom"
 
-import RouteDetail from './RouteDetail'
-import GridRoutesCards from './Home'
-import GridRoutesImgs from './Home2'
-import Typography from "@material-ui/core/Typography";
+import GridRoutesImgs from './Home'
 import RouteTimeline from './RouteTimeline'
 import ImgGallery from './ImgGallery'
 import MetaTags from 'react-meta-tags';

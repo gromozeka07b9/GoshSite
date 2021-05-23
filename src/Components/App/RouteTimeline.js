@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import Container from "@material-ui/core/Container";
-import RouteDetail from "./RouteDetail";
 import {makeStyles} from "@material-ui/core/styles";
 import GridListTile from "@material-ui/core/GridListTile";
 import Typography from "@material-ui/core/Typography";
@@ -29,8 +28,15 @@ import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import {Helmet} from "react-helmet";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+
+var routeImgFilename = '';
 
 const useStyles = makeStyles((theme) => ({
+    toolBar:{
+        maxWidth:'100%', minHeight:'40px', maxHeight:'70px',margin: '0px', background:'white'
+    },
     paper: {
         padding: '6px 16px',
     },
@@ -93,6 +99,7 @@ class RouteTimeline extends React.Component{
             .then(res => res.json())
             .then(
                 (result) => {
+                    routeImgFilename = result[0].imgFilename != null && result[0].imgFilename != "" ? "https://igosh.pro/shared/" + result[0].imgFilename : "https://igosh.pro/shared/" + result[0].firstImageName.replace(".jpg","_preview.jpg");
                     this.setState({
                         isRouteLoaded: true,
                         route: result
@@ -185,32 +192,43 @@ class RouteTimeline extends React.Component{
         } else
             return (
                 <div>
-                    {/*<MetaTags>
-                    <title>{isRouteLoaded ? route[0].name : "GoSh!"}</title>
-                    <meta id="og-image" property="og:image" content="path/to/image.jpg" />
-                </MetaTags>*/}
-                    {/*<Helmet>
-                    <meta charSet="utf-8" />
-                    <title>My Title</title>
-                    <link rel="canonical" href="http://mysite.com/example" />
-                </Helmet>*/}                
-                <Container>
-                    <Box display="flex" justifyContent="center" alignItems="center" margin="5px">
-                        <Avatar className={classes.avatar}>{isRouteLoaded ? getShortName(route[0].creatorName) : ""}</Avatar>
-                        <Typography variant="h5" align="center" style={{margin: "5px"}}>
-                            {isRouteLoaded ? route[0].name : ""}
-                        </Typography>
+                    <AppBar position={"static"} style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
+                        <Toolbar variant="dense" style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
+                            <a href="..">
+                                <img src="https://igosh.pro/logo192.png" width={32} height={32} align="left" style={{margin:5}} />
+                            </a>
+                            <Typography variant="h6" color="inherit">
+                                IGOSH.PRO
+                            </Typography>
+                            <Box margin="5px" display='flex' width='100%' justifyContent='center' >
+                            </Box>
+                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
+                                <img src="https://igosh.pro/playgoogle.jpg" width="160px"/>
+                            </a>
+                        </Toolbar>
+                    </AppBar>
+                    <Box display="flex" justifyContent="center" alignItems="center" margin="0px">
+                        <div style={{width:'100%',height:'300px',overflow:'hidden', opacity:'0.3'}}>
+                            <img src={ routeImgFilename } width='100%' style={{verticalAlign:'middle'}} />
+                        </div>
+                        <div style={{margin: "5px", position:"absolute"}} align="center">
+                            <Avatar style={{margin: "5px"}}>{isRouteLoaded ? getShortName(route[0].creatorName) : ""}</Avatar>
+                            <Typography variant="h4" style={{margin: "5px", textAlign:"center", width:"100%", color:"black"}}>
+                                {isRouteLoaded ? route[0].name : ""}
+                            </Typography>
+                            <Typography variant="h6" align="center" style={{margin: "5px"}}>
+                                {isRouteLoaded ? route[0].description : ""}
+                            </Typography>
+                        </div>
                     </Box>
+                <Container>
                     <Box display="flex" justifyContent="center" alignItems="center">
-                        <Typography variant="subtitle1" align="center" style={{margin: "5px"}}>
-                            {isRouteLoaded ? route[0].description : ""}
-                        </Typography>
                     </Box>
                     <GridList cols={1} spacing="0">
                         {items.map((item) => (
                             <GridListTile id={item.routePointId} key={item.routeId} cols={item.cols || 1}>
                                 <Container>
-                                    <Typography variant="body1" style={{margin: "10px"}}>
+                                    <Typography variant="h6" style={{margin: "10px"}}>
                                         {getShortDate(item.createDate)} {item.name}
                                     </Typography>
                                     <Typography variant="body1" align="justify" style={{margin: "10px"}}>

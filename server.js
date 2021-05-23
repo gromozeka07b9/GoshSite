@@ -5,21 +5,24 @@ const fs = require("fs");
 const fetch = require('node-fetch');
 var cache = require('memory-cache');
 
-const descriptionRu = "Объединяем фотоальбом, блог и маршрут вашего путешествия!"
-const descriptionEn = "Your photoalbums, blogs and track in one!"
-const pageTitle = "GoSh!"
+const pageTitleRu = "igosh.pro - Ваши впечатления от путешествий!"
+const pageTitleEn = "igosh.pro - Your impressions from traveling!"
+const descriptionRu = "Альбомы путешествий - фотографии, рассказы, советы, треки от тех, кто бывает в интересных местах. Расскажите друзьям о своем отпуске!"
+const descriptionEn = "Travel albums - images, stories, tricks and tracks from interested places. Tell your story friends from your vacation!"
 const pathToIndex = path.join(__dirname, "build/index.html")
 
 app.get("/home", (req, res) => {
     console.log("home-------------------------")
+    let title = getTitleForLocale(req);
     let description = getDescriptionForLocale(req);
-    res.send(getUpdatedIndexForLocale(description))
+    res.send(getUpdatedIndexForLocale(title, description))
 })
 
 app.get("/", (req, res) => {
     console.log("/-------------------------")
+    let title = getTitleForLocale(req);
     let description = getDescriptionForLocale(req);
-    res.send(getUpdatedIndexForLocale(description))
+    res.send(getUpdatedIndexForLocale(title, description))
 })
 
 app.get("/routetimeline/*", (req, res) => {
@@ -52,27 +55,61 @@ app.get("/routetimeline/*", (req, res) => {
                 })
                 .catch(error => {
                     console.log(error);
-                    updateRouteTimelineResource(res, pageTitle, "", "https://igosh.pro/gallery/images/icon.png")
+                    updateRouteTimelineResource(res, pageTitleEn, "", "https://igosh.pro/gallery/images/icon.png")
                 })
         }
     }
 })
 
-function getDescriptionForLocale(req) {
+/*function getDescriptionForLocale(req) {
     let locale = req.headers["accept-language"]
-    let description = ""
-    if(locale.search("ru") !== -1){
-        description = descriptionRu
-        console.log("ru")
+    let description = descriptionEn
+    if(locale != null){
+        console.log("locale request:" + locale)
+        if(locale.search("ru") !== -1){
+            description = descriptionRu
+            console.log("locale:ru")
+        }
     } else{
-        description = descriptionEn
-        console.log("en")
+        console.log("locale: default")
     }
-    console.log("request locale:" + locale)
+    return description;
+}*/
+
+function getDescriptionForLocale(req) {
+    let locale = getLocale(req)
+    let description = descriptionEn
+    if(locale === "ru"){
+        description = descriptionRu
+    }
     return description;
 }
 
-function getUpdatedIndexForLocale(description){
+function getTitleForLocale(req) {
+    let locale = getLocale(req)
+    let title = pageTitleEn
+    if(locale === "ru"){
+        title = pageTitleRu
+    }
+    return title;
+}
+
+function getLocale(req){
+    let locale = req.headers["accept-language"]
+    let resultLocale = "en";
+    if(locale != null){
+        console.log("locale request:" + locale)
+        if(locale.search("ru") !== -1){
+            resultLocale = "ru"
+        }
+        console.log("locale:" + resultLocale)
+    } else{
+        console.log("locale: default")
+    }
+    return resultLocale;
+}
+
+function getUpdatedIndexForLocale(pageTitle, description){
     let raw = fs.readFileSync(pathToIndex)
     let updated = raw.toString().replace("__title__", `<title>${pageTitle}</title>`)
     updated = updated.toString().replace("__description__", `<meta name="description" content="${description}" />`)
