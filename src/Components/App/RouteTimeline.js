@@ -11,10 +11,8 @@ import InfoIcon from '@material-ui/icons/Info';
 import { Button} from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import {
-    BrowserView,
-    MobileView,
-    isBrowser,
-    isMobile
+    isMobile,
+    isSafari
 } from "react-device-detect";
 import {
     LightgalleryProvider,
@@ -30,12 +28,19 @@ import Box from "@material-ui/core/Box";
 import {Helmet} from "react-helmet";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 
 var routeImgFilename = '';
 
-const useStyles = makeStyles((theme) => ({
+const styles = makeStyles((theme) => ({
+    root:{
+        flexGrow: 1
+    },
+    appBar:{
+        maxWidth:'100%', minHeight:'40px', maxHeight:'50px',margin: '0px', background:'white'
+    },
     toolBar:{
-        maxWidth:'100%', minHeight:'40px', maxHeight:'70px',margin: '0px', background:'white'
+        maxWidth:'100%', minHeight:'0px', maxHeight:'50px',margin: '0px', background:'black'
     },
     paper: {
         padding: '6px 16px',
@@ -192,19 +197,27 @@ class RouteTimeline extends React.Component{
         } else
             return (
                 <div>
-                    <AppBar position={"static"} style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
+                    <AppBar position={"fixed"} style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
                         <Toolbar variant="dense" style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
                             <a href="..">
-                                <img src="https://igosh.pro/logo192.png" width={32} height={32} align="left" style={{margin:5}} />
+                                <img src="https://igosh.pro/logo192.png" width={24} height={24} align="left" style={{margin:5}} />
                             </a>
-                            <Typography variant="h6" color="inherit">
+                            <Typography variant="body1" color="inherit">
                                 IGOSH.PRO
                             </Typography>
-                            <Box margin="5px" display='flex' width='100%' justifyContent='center' >
+                            <Box margin="0px" display='flex' width='100%' justifyContent='center' >
                             </Box>
-                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
-                                <img src="https://igosh.pro/playgoogle.jpg" width="160px"/>
+                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh" style={isSafari ? {display:'none'} : {}}>
+                                <img src="https://igosh.pro/playgoogle.jpg" style={{verticalAlign:'middle'}} width="100px"/>
                             </a>
+                            <IconButton
+                                edge="end"
+                                aria-label="account of current user"
+                                aria-haspopup="true"
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
                         </Toolbar>
                     </AppBar>
                     <Box display="flex" justifyContent="center" alignItems="center" margin="0px">
@@ -271,4 +284,4 @@ class RouteTimeline extends React.Component{
     }
 }
 
-export default withStyles(useStyles)(RouteTimeline);
+export default withStyles(styles)(RouteTimeline);

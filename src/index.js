@@ -17,7 +17,6 @@ ReactDOM.render((
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Router history={history}>
-                
                 <App/>
             </Router>            
         </ThemeProvider>

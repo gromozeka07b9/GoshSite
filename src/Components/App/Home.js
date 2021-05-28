@@ -14,23 +14,23 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import Typography from "@material-ui/core/Typography";
 import Container from '@material-ui/core/Container';
 import {
-    BrowserView,
-    MobileView,
-    isBrowser,
-    isMobile
+    isMobile, isSafari
 } from "react-device-detect";
-import {blue, grey, yellow} from "@material-ui/core/colors";
 
 const styles = {
     root:{
-        flexGrow: 1,
+        flexGrow: 1
+    },
+    appBar:{
+      maxWidth:'100%', minHeight:'40px', maxHeight:'50px',margin: '0px', background:'white'
     },
     toolBar:{
-      maxWidth:'100%', minHeight:'40px', maxHeight:'70px',margin: '0px', background:'white'
-    },
+        maxWidth:'100%', minHeight:'0px', maxHeight:'50px',margin: '0px'
+    },    
     titleBar: {
         background:
             'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
@@ -114,19 +114,27 @@ class GridRoutesImgs extends React.Component {
 
             return (
                 <div className={classes.root}>
-                    <AppBar position={"fixed"} className={classes.toolBar}>
+                    <AppBar position={"fixed"} className={classes.appBar}>
                         <Toolbar variant="dense" className={classes.toolBar}>
                             <a href="https://igosh.pro">
-                                <img src="https://igosh.pro/logo192.png" width={32} height={32} align="left" style={{margin:5}} />
+                                <img src="https://igosh.pro/logo192.png" width={24} height={24} align="left" style={{margin:5}} />
                             </a>
-                            <Typography variant="h6" color="inherit">
+                            <Typography variant="body1" color="inherit">
                                 IGOSH.PRO
                             </Typography>
-                            <Box margin="5px" display='flex' width='100%' justifyContent='center' >
+                            <Box margin="0px" display='flex' width='100%' justifyContent='center' >
                             </Box>
-                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
-                                <img src="https://igosh.pro/playgoogle.jpg" width="160px"/>
+                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh" style={isSafari ? {display:'none'} : {}}>
+                                <img src="https://igosh.pro/playgoogle.jpg" style={{verticalAlign:'middle'}} width="100px"/>
                             </a>
+                            <IconButton
+                                edge="end"
+                                aria-label="account of current user"
+                                aria-haspopup="true"
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
                         </Toolbar>                        
                     </AppBar>
                     <Box display="flex" justifyContent="center" maxWidth="100%" height='200px' alignItems="center" margin='10px'>
