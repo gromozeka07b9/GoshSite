@@ -9,6 +9,7 @@ import {
 
 import GridRoutesImgs from './Home'
 import RouteTimeline from './RouteTimeline'
+import ImgGallery from './ImgGallery'
 import MetaTags from 'react-meta-tags';
 
 class App extends Component {
