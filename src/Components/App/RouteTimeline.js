@@ -366,6 +366,9 @@ class RouteTimeline extends React.Component{
                                         <Typography variant="h6" component="h1">
                                             {item.name}
                                         </Typography>
+                                        <Typography variant="body1" align="justify" style={{margin: "0px", noWrap:true}}>
+                                            {item.description}
+                                        </Typography>                                        
                                         <Container>
                                             <LightgalleryProvider onAfterOpen={(event, lightgallery_object) => {
                                                 hideAppBar();
