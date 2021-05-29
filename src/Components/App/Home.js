@@ -17,9 +17,21 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Typography from "@material-ui/core/Typography";
 import Container from '@material-ui/core/Container';
+import GoogleLogin from 'react-google-login';
 import {
     isMobile, isSafari
 } from "react-device-detect";
+
+const failureGoogleAuth = (response) => {
+    console.log(response);
+    alert("Error:" + response);
+}
+
+const successGoogleAuth = (response) => {
+    var avatar = document.getElementById('avatar');
+    avatar.srcSet = response.profileObj.imageUrl;
+    alert(avatar.srcSet);
+}
 
 const styles = {
     root:{
@@ -146,6 +158,13 @@ class GridRoutesImgs extends React.Component {
                                 Расскажите друзьям о своем отпуске!
                             </Typography>
                         </div>
+                        {/*<GoogleLogin
+                            clientId="784308315468-t4u6of34ddeue7eevr5o8mgdakm4kpbl.apps.googleusercontent.com"
+                            buttonText="Login"
+                            onSuccess={successGoogleAuth}
+                            onFailure={failureGoogleAuth}
+                            cookiePolicy={'single_host_origin'}
+                        />*/}
                     </Box>
                     <Container className={classes.gridContainer}>
                         <GridList cellHeight={260} cols={isMobile ? 1 : 3} spacing={5} className={classes.gridList}>

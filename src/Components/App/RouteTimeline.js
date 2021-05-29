@@ -184,6 +184,16 @@ class RouteTimeline extends React.Component{
             return isMobile ? "flow" : "flex";
         }
 
+        function hideAppBar() {
+            var appBar = document.getElementById('appBar');
+            appBar.style.display = 'none';
+        }
+        
+        function showAppBar() {
+            var appBar = document.getElementById('appBar');
+            appBar.style.display = '';
+        }
+
         if (error) {
             return <div>Ошибка: {error.message}</div>;
         } else if (!isLoaded) {
@@ -197,7 +207,7 @@ class RouteTimeline extends React.Component{
         } else
             return (
                 <div>
-                    <AppBar position={"fixed"} style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
+                    <AppBar position={"fixed"} id='appBar' style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
                         <Toolbar variant="dense" style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
                             <a href="..">
                                 <img src="https://igosh.pro/logo192.png" width={24} height={24} align="left" style={{margin:5}} />
@@ -247,7 +257,11 @@ class RouteTimeline extends React.Component{
                                     <Typography variant="body1" align="justify" style={{margin: "10px"}}>
                                         {item.description}
                                     </Typography>
-                                    <LightgalleryProvider>
+                                    <LightgalleryProvider onAfterOpen={(event, lightgallery_object) => {
+                                        hideAppBar();
+                                    }} onBeforeClose={(event, lightgallery_object) => {
+                                        showAppBar();
+                                    }}>
                                         <div
                                             style={{
                                                 display: getDisplayForImg(),
