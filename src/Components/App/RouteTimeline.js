@@ -29,10 +29,11 @@ import {Helmet} from "react-helmet";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import GoogleLogin from "react-google-login";
 
 var routeImgFilename = '';
 
-const styles = makeStyles((theme) => ({
+const styles = {
     root:{
         flexGrow: 1
     },
@@ -40,13 +41,10 @@ const styles = makeStyles((theme) => ({
         maxWidth:'100%', minHeight:'40px', maxHeight:'50px',margin: '0px', background:'white'
     },
     toolBar:{
-        maxWidth:'100%', minHeight:'0px', maxHeight:'50px',margin: '0px', background:'black'
+        maxWidth:'100%', minHeight:'0px', maxHeight:'50px',margin: '0px'
     },
     paper: {
         padding: '6px 16px',
-    },
-    secondaryTail: {
-        backgroundColor: theme.palette.secondary.main,
     },
     divGalleryItem:{
         width:"auto",
@@ -59,7 +57,7 @@ const styles = makeStyles((theme) => ({
         height:"0px",
         backgroundColor: "black",
     }
-}));
+};
 
 const PhotoItem = ({ image, thumb, group }) => (
     <div style={{ maxWidth: "1200px", width: "100%", padding: "0px" }}>
@@ -94,7 +92,11 @@ class RouteTimeline extends React.Component{
             isRouteLoaded: false,
             route: [],
             items: [],
-            dimensions: new Map()
+            dimensions: new Map(),
+            authAvatarImageUrl: "https://developers.google.com/identity/images/g-logo.png",
+            authLoginText: navigator.language.includes("ru") ? "Войти" : "Login",
+            authUserId: "",
+            authAccessToken: ""
         };
         //this.onImgLoad = this.onImgLoad.bind(this);
     }
@@ -142,7 +144,6 @@ class RouteTimeline extends React.Component{
 
     render() {
         let firstImgs = new Map();
-
         const { error, isLoaded, isRouteLoaded, route, items, dimensions } = this.state;
         const { classes } = this.props;
         function getImgColumnCount(point) {
@@ -194,6 +195,59 @@ class RouteTimeline extends React.Component{
             appBar.style.display = '';
         }
 
+        const setViewedRoute = () => {
+            if(this.state.authAccessToken !== "")
+            {
+                fetch("https://igosh.pro/api/route/" + this.props.match.params.routeId + "/addviewed", {
+                    method: "POST",
+                    headers:{'Content-Type':'application/json', 'Authorization':'Bearer ' + this.state.authAccessToken},
+                })
+                    .then(
+                        (result) => {
+                            console.log(result);
+                            //alert("ok");
+                        },
+                        (error) => {
+                            console.log(error);
+                            alert("error");
+                        })
+            }
+        }
+        
+        const failureGoogleAuth = (response) => {
+            console.log(response);
+        }
+
+        const successGoogleAuth = (response) => {
+            console.log(response);
+            var request = {
+                Email: response.profileObj.email,
+                Username: response.profileObj.name,
+                ImgUrl: response.profileObj.imageUrl,
+                AuthenticatorUserId: response.profileObj.googleId
+            }
+            fetch("https://igosh.pro/api/account/google", {
+                method: "POST",
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(request)})
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.setState({
+                            //ToDo:imgUrl пока не возвращается с сервера
+                            authAvatarImageUrl: response.profileObj.imageUrl,
+                            authLoginText: result.username,
+                            authUserId: result.userId,
+                            authAccessToken: result.access_token
+                        })
+                        setViewedRoute();
+                    },
+                    (error) => {
+                        console.log(error);
+                        //alert("error");
+                    })
+        }
+
         if (error) {
             return <div>Ошибка: {error.message}</div>;
         } else if (!isLoaded) {
@@ -207,8 +261,8 @@ class RouteTimeline extends React.Component{
         } else
             return (
                 <div>
-                    <AppBar position={"fixed"} id='appBar' style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
-                        <Toolbar variant="dense" style={{background: 'white', maxWidth:'100%',minHeight:'40px', maxHeight:'70px',margin: '0px'}}>
+                    <AppBar position={"fixed"} id='appBar' className={classes.appBar}>
+                        <Toolbar variant="regular" className={classes.toolBar}>
                             <a href="..">
                                 <img src="https://igosh.pro/logo192.png" width={24} height={24} align="left" style={{margin:5}} />
                             </a>
@@ -220,14 +274,21 @@ class RouteTimeline extends React.Component{
                             <a href="https://play.google.com/store/apps/details?id=com.sd.gosh" style={isSafari ? {display:'none'} : {}}>
                                 <img src="https://igosh.pro/playgoogle.jpg" style={{verticalAlign:'middle'}} width="100px"/>
                             </a>
-                            <IconButton
-                                edge="end"
-                                aria-label="account of current user"
-                                aria-haspopup="true"
-                                color="inherit"
-                            >
-                                <AccountCircle />
-                            </IconButton>
+                            <GoogleLogin
+                                clientId="784308315468-t4u6of34ddeue7eevr5o8mgdakm4kpbl.apps.googleusercontent.com"
+                                buttonText="Login"
+                                onSuccess={successGoogleAuth}
+                                onFailure={failureGoogleAuth}
+                                cookiePolicy={'single_host_origin'}
+                                isSignedIn={true}
+                                render={renderProps=>(
+                                    <Button onClick={renderProps.onClick} disabled={renderProps.disabled} variant={"text"} size={"small"}>
+                                        <Avatar id="avatarElement" alt="Avatar" src={this.state.authAvatarImageUrl} className={classes.avatar}>
+                                        </Avatar>
+                                        {this.state.authLoginText}
+                                    </Button>
+                                )}
+                            />
                         </Toolbar>
                     </AppBar>
                     <Box display="flex" justifyContent="center" alignItems="center" margin="0px">
@@ -239,6 +300,10 @@ class RouteTimeline extends React.Component{
                             <Typography variant="h4" style={{margin: "5px", textAlign:"center", width:"100%", color:"black"}}>
                                 {isRouteLoaded ? route[0].name : ""}
                             </Typography>
+                        </div>
+                    </Box>
+                    <Box display="flex" justifyContent="center" alignItems="center" margin="0px">
+                        <div style={{margin: "5px"}} align="center">
                             <Typography variant="h6" align="center" style={{margin: "5px"}}>
                                 {isRouteLoaded ? route[0].description : ""}
                             </Typography>
