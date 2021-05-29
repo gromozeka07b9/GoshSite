@@ -20,6 +20,13 @@ import {
     withLightgallery,
     useLightgallery
 } from "react-lightgallery";
+import Timeline from '@material-ui/lab/Timeline';
+import TimelineItem from '@material-ui/lab/TimelineItem';
+import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
+import TimelineConnector from '@material-ui/lab/TimelineConnector';
+import TimelineContent from '@material-ui/lab/TimelineContent';
+import TimelineDot from '@material-ui/lab/TimelineDot';
+import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent';
 
 import * as PT from "prop-types";
 import Grid from "@material-ui/core/Grid";
@@ -30,12 +37,14 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import GoogleLogin from "react-google-login";
+import Badge from "@material-ui/core/Badge";
 
 var routeImgFilename = '';
 
 const styles = {
     root:{
-        flexGrow: 1
+        flexGrow: 1,
+        margin:'0px',
     },
     appBar:{
         maxWidth:'100%', minHeight:'40px', maxHeight:'50px',margin: '0px', background:'white'
@@ -76,14 +85,6 @@ PhotoItem.propTypes = {
 
 class RouteTimeline extends React.Component{
 
-    /*onImgLoad({target:img}) {
-        //this.setState({dimensions:{src:img.src,height:img.offsetHeight,
-        //width:img.offsetWidth}});
-        var imgs = this.state.dimensions.set({src:img.src,height:img.offsetHeight,
-            width:img.offsetWidth})
-        this.setState({dimensions:imgs});
-    }*/
-
     constructor(props) {
         super(props);
         this.state = {
@@ -93,6 +94,8 @@ class RouteTimeline extends React.Component{
             route: [],
             items: [],
             dimensions: new Map(),
+            likeCount: 0,
+            isRouteLiked: false,
             authAvatarImageUrl: "https://developers.google.com/identity/images/g-logo.png",
             authLoginText: navigator.language.includes("ru") ? "Войти" : "Login",
             authUserId: "",
@@ -109,7 +112,8 @@ class RouteTimeline extends React.Component{
                     routeImgFilename = result[0].imgFilename != null && result[0].imgFilename != "" ? "https://igosh.pro/shared/" + result[0].imgFilename : "https://igosh.pro/shared/" + result[0].firstImageName.replace(".jpg","_preview.jpg");
                     this.setState({
                         isRouteLoaded: true,
-                        route: result
+                        route: result,
+                        likeCount: result[0].likeCount
                     })
                 },
                 // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
@@ -205,7 +209,29 @@ class RouteTimeline extends React.Component{
                     .then(
                         (result) => {
                             console.log(result);
-                            //alert("ok");
+                        },
+                        (error) => {
+                            console.log(error);
+                        })
+            }
+        }
+
+        const setEmotionRoute = () => {
+            if(this.state.authAccessToken !== "")
+            {
+                fetch("https://igosh.pro/api/likes/" + this.props.match.params.routeId + "/addemotion", {
+                    method: "POST",
+                    headers:{'Content-Type':'application/json', 'Authorization':'Bearer ' + this.state.authAccessToken},
+                    body: JSON.stringify({EmotionNum:1})
+                })
+                    .then(
+                        (result) => {
+                            console.log(result);
+                            let likeCountWithAdded = this.state.likeCount + 1;
+                            this.setState({
+                                likeCount: likeCountWithAdded,
+                                isRouteLiked: true
+                            })
                         },
                         (error) => {
                             console.log(error);
@@ -213,7 +239,7 @@ class RouteTimeline extends React.Component{
                         })
             }
         }
-        
+
         const failureGoogleAuth = (response) => {
             console.log(response);
         }
@@ -260,7 +286,7 @@ class RouteTimeline extends React.Component{
             </div>;
         } else
             return (
-                <div>
+                <div className={classes.root}>
                     <AppBar position={"fixed"} id='appBar' className={classes.appBar}>
                         <Toolbar variant="regular" className={classes.toolBar}>
                             <a href="..">
@@ -300,6 +326,21 @@ class RouteTimeline extends React.Component{
                             <Typography variant="h4" style={{margin: "5px", textAlign:"center", width:"100%", color:"black"}}>
                                 {isRouteLoaded ? route[0].name : ""}
                             </Typography>
+                            <div style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                <IconButton onClick={setEmotionRoute} disabled={this.state.isRouteLiked || this.state.authAccessToken === ''}
+                                    edge="end"
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                >
+                                    <Badge id="badgeLikeCount" badgeContent={this.state.likeCount} color="primary" style={{margin: "15px"}}>
+                                        {this.state.isRouteLiked ? (<img src="../ic_like_on_1.png" width="40px" height="40px"/>) : (<img src="../ic_like_off_1.png" width="40px" height="40px"/>)}
+                                    </Badge>
+                                </IconButton>
+                            </div>
                         </div>
                     </Box>
                     <Box display="flex" justifyContent="center" alignItems="center" margin="0px">
@@ -309,10 +350,48 @@ class RouteTimeline extends React.Component{
                             </Typography>
                         </div>
                     </Box>
+                    <Timeline>
+                        {
+                            items.map((item) => (
+                                <TimelineItem>
+                                    <TimelineOppositeContent style={{ flex: 0.1 }}>
+                                        {isMobile ? "" : (<Typography variant={"body2"} color="textSecondary">{getShortDate(item.createDate)}</Typography>)}
+                                    </TimelineOppositeContent>
+                                    <TimelineSeparator >
+                                        <TimelineDot />
+                                        <TimelineConnector />
+                                    </TimelineSeparator>
+                                    <TimelineContent>
+                                        {isMobile ? (<Typography variant={"body2"} color="textSecondary">{getShortDate(item.createDate)}</Typography>) : ""}
+                                        <Typography variant="h6" component="h1">
+                                            {item.name}
+                                        </Typography>
+                                        <Container>
+                                            <LightgalleryProvider onAfterOpen={(event, lightgallery_object) => {
+                                                hideAppBar();
+                                            }} onBeforeClose={(event, lightgallery_object) => {
+                                                showAppBar();
+                                            }}>
+                                                <div
+                                                    style={{
+                                                        display: getDisplayForImg(),
+                                                        alignItems: "center",
+                                                        justifyContent: "center"
+                                                    }}
+                                                >
+                                                    {item.medias.map((p, idx) => (
+                                                        <PhotoItem key={idx} image={p.url} group="any" />
+                                                    ))}
+                                                </div>
+                                            </LightgalleryProvider>
+                                        </Container>
+                                    </TimelineContent>
+                                </TimelineItem>
+                            ))
+                        }
+                    </Timeline>
                 <Container>
-                    <Box display="flex" justifyContent="center" alignItems="center">
-                    </Box>
-                    <GridList cols={1} spacing="0">
+                    {/*<GridList cols={1} spacing="0">
                         {items.map((item) => (
                             <GridListTile id={item.routePointId} key={item.routeId} cols={item.cols || 1}>
                                 <Container>
@@ -340,18 +419,9 @@ class RouteTimeline extends React.Component{
                                         </div>
                                     </LightgalleryProvider>
                                 </Container>
-                                {/*<GridListTileBar
-                                title='test title'
-                                subtitle={<span>{item.name}</span>}
-                                actionIcon={
-                                    <IconButton aria-label={`info about Sergey Dyachenko`}>
-                                        <InfoIcon />
-                                    </IconButton>
-                                }
-                            />*/}
                             </GridListTile>
                         ))}
-                    </GridList>
+                    </GridList>*/}
                     <Box display="flex" justifyContent="center" alignItems="center" margin="5px" >
                         <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
                             <img src="https://igosh.pro/playgoogle.jpg" width="200px"/>

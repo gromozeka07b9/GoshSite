@@ -142,7 +142,9 @@ class GridRoutesImgs extends React.Component {
                     },
                     (error) => {
                         console.log(error);
-                        //alert("error");
+                        if(isMobile){
+                            alert(error.message);
+                        }
                     })
         }
 
@@ -197,7 +199,7 @@ class GridRoutesImgs extends React.Component {
                         </div>
                     </Box>
                     <Container className={classes.gridContainer}>
-                        <GridList cellHeight={260} cols={isMobile ? 1 : 3} spacing={5} className={classes.gridList}>
+                        <GridList cellHeight={320} cols={isMobile ? 1 : 3} spacing={5} className={classes.gridList}>
                             {items.map((item) => (
                                 <GridListTile key={item.routeId} cols={item.cols || 1} component={Link} to={"/routetimeline/" + item.id} params={{name:item.name}}>
 
