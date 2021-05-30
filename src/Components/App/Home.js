@@ -166,11 +166,6 @@ class GridRoutesImgs extends React.Component {
                             </Typography>
                             <Box margin="0px" display='flex' width='100%' justifyContent='center' >
                             </Box>
-                            <Box margin="0px" display='flex' width='100%' justifyContent='right' >
-                                <a href="https://play.google.com/store/apps/details?id=com.sd.gosh" style={isSafari ? {display:'none'} : {}}>
-                                    <img src="https://igosh.pro/playgoogle.jpg" style={{verticalAlign:'middle'}} width="100px"/>
-                                </a>
-                            </Box>
                             <GoogleLogin
                                 clientId="784308315468-t4u6of34ddeue7eevr5o8mgdakm4kpbl.apps.googleusercontent.com"
                                 buttonText="Login"
@@ -188,14 +183,19 @@ class GridRoutesImgs extends React.Component {
                             />
                         </Toolbar>                        
                     </AppBar>
-                    <Box display="flex" justifyContent="center" maxWidth="100%" height='200px' alignItems="center" margin='10px'>
+                    <Box display="flex" justifyContent="center" maxWidth="100%" height='220px' alignItems="center" margin='10px'>
                         <div>
                             <Typography variant="body1" color="inherit" align='center'>
                                 Альбомы путешествий - фотографии, рассказы, советы, треки от тех, кто бывает в интересных местах.
                             </Typography>
                             <Typography variant="body1" color="inherit" align='center'>
-                                Расскажите друзьям о своем отпуске!
+                                С помощью приложения вы можете рассказать друзьям о своем отпуске!
                             </Typography>
+                            <Box marginTop="10px" display='flex' width='100%' justifyContent='center' >
+                                <a href="https://play.google.com/store/apps/details?id=com.sd.gosh" style={isSafari ? {display:'none'} : {}}>
+                                    <img src="https://igosh.pro/playgoogle.jpg" style={{verticalAlign:'middle'}} width="100px"/>
+                                </a>
+                            </Box>
                         </div>
                     </Box>
                     <Container className={classes.gridContainer}>

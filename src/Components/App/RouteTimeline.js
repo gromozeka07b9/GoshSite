@@ -297,9 +297,6 @@ class RouteTimeline extends React.Component{
                             </Typography>
                             <Box margin="0px" display='flex' width='100%' justifyContent='center' >
                             </Box>
-                            <a href="https://play.google.com/store/apps/details?id=com.sd.gosh" style={isSafari ? {display:'none'} : {}}>
-                                <img src="https://igosh.pro/playgoogle.jpg" style={{verticalAlign:'middle'}} width="100px"/>
-                            </a>
                             <GoogleLogin
                                 clientId="784308315468-t4u6of34ddeue7eevr5o8mgdakm4kpbl.apps.googleusercontent.com"
                                 buttonText="Login"
@@ -350,14 +347,14 @@ class RouteTimeline extends React.Component{
                             </Typography>
                         </div>
                     </Box>
-                    <Timeline>
+                    <Timeline style={{margin:'0px', padding:'0px'}}>
                         {
                             items.map((item) => (
-                                <TimelineItem>
-                                    <TimelineOppositeContent style={{ flex: 0.1 }}>
-                                        {isMobile ? "" : (<Typography variant={"body2"} color="textSecondary">{getShortDate(item.createDate)}</Typography>)}
+                                <TimelineItem style={{margin:'0px', padding:'0px'}}>
+                                    <TimelineOppositeContent style={{ flex: 0.1, margin:'0px', padding:'0px' }}>
+                                        {isMobile ? "" : (<Typography variant={"body2"} color="textSecondary" style={{margin:'5px'}}>{getShortDate(item.createDate)}</Typography>)}
                                     </TimelineOppositeContent>
-                                    <TimelineSeparator >
+                                    <TimelineSeparator>
                                         <TimelineDot />
                                         <TimelineConnector />
                                     </TimelineSeparator>
@@ -368,66 +365,33 @@ class RouteTimeline extends React.Component{
                                         </Typography>
                                         <Typography variant="body1" align="justify" style={{margin: "0px", noWrap:true}}>
                                             {item.description}
-                                        </Typography>                                        
-                                        <Container>
-                                            <LightgalleryProvider onAfterOpen={(event, lightgallery_object) => {
-                                                hideAppBar();
-                                            }} onBeforeClose={(event, lightgallery_object) => {
-                                                showAppBar();
-                                            }}>
-                                                <div
-                                                    style={{
-                                                        display: getDisplayForImg(),
-                                                        alignItems: "center",
-                                                        justifyContent: "center"
-                                                    }}
-                                                >
-                                                    {item.medias.map((p, idx) => (
-                                                        <PhotoItem key={idx} image={p.url} group="any" />
-                                                    ))}
-                                                </div>
-                                            </LightgalleryProvider>
-                                        </Container>
+                                        </Typography>
+                                        <LightgalleryProvider onAfterOpen={(event, lightgallery_object) => {
+                                            hideAppBar();
+                                        }} onBeforeClose={(event, lightgallery_object) => {
+                                            showAppBar();
+                                        }}>
+                                            <div
+                                                style={{
+                                                    display: getDisplayForImg(),
+                                                    alignItems: "left",
+                                                    justifyContent: "left"
+                                                }}
+                                            >
+                                                {item.medias.map((p, idx) => (
+                                                    <PhotoItem key={idx} image={p.url} group="any" />
+                                                ))}
+                                            </div>
+                                        </LightgalleryProvider>
                                     </TimelineContent>
                                 </TimelineItem>
                             ))
                         }
                     </Timeline>
                 <Container>
-                    {/*<GridList cols={1} spacing="0">
-                        {items.map((item) => (
-                            <GridListTile id={item.routePointId} key={item.routeId} cols={item.cols || 1}>
-                                <Container>
-                                    <Typography variant="h6" style={{margin: "10px"}}>
-                                        {getShortDate(item.createDate)} {item.name}
-                                    </Typography>
-                                    <Typography variant="body1" align="justify" style={{margin: "10px"}}>
-                                        {item.description}
-                                    </Typography>
-                                    <LightgalleryProvider onAfterOpen={(event, lightgallery_object) => {
-                                        hideAppBar();
-                                    }} onBeforeClose={(event, lightgallery_object) => {
-                                        showAppBar();
-                                    }}>
-                                        <div
-                                            style={{
-                                                display: getDisplayForImg(),
-                                                alignItems: "center",
-                                                justifyContent: "center"
-                                            }}
-                                        >
-                                            {item.medias.map((p, idx) => (
-                                                <PhotoItem key={idx} image={p.url} group="any" />
-                                            ))}
-                                        </div>
-                                    </LightgalleryProvider>
-                                </Container>
-                            </GridListTile>
-                        ))}
-                    </GridList>*/}
                     <Box display="flex" justifyContent="center" alignItems="center" margin="5px" >
                         <a href="https://play.google.com/store/apps/details?id=com.sd.gosh">
-                            <img src="https://igosh.pro/playgoogle.jpg" width="200px"/>
+                            <img src="https://igosh.pro/playgoogle.jpg" width="100px"/>
                         </a>
                     </Box>
                 </Container>
