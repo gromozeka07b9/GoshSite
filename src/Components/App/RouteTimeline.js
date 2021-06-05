@@ -96,6 +96,7 @@ class RouteTimeline extends React.Component{
             dimensions: new Map(),
             likeCount: 0,
             isRouteLiked: false,
+            likedByCurrentUser: false,
             authAvatarImageUrl: "https://developers.google.com/identity/images/g-logo.png",
             authLoginText: navigator.language.includes("ru") ? "Войти" : "Login",
             authUserId: "",
@@ -105,7 +106,20 @@ class RouteTimeline extends React.Component{
     }
 
     componentDidMount() {
-        fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,9]&filter={'id':'" + this.props.match.params.routeId + "'}")
+        let token = "";
+        if(this.state.authAccessToken !== "")
+        {
+            token = this.state.authAccessToken;
+        } else{
+            const tokenValue = window.localStorage.getItem("accessToken");
+            if(tokenValue !== null){
+                token = tokenValue;
+            }
+        }
+        fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,9]&filter={'id':'" + this.props.match.params.routeId + "'}", {
+            method:"GET",
+            headers:{'Content-Type':'application/json', 'Authorization': "Bearer " + token},
+        })
             .then(res => res.json())
             .then(
                 (result) => {
@@ -113,7 +127,9 @@ class RouteTimeline extends React.Component{
                     this.setState({
                         isRouteLoaded: true,
                         route: result,
-                        likeCount: result[0].likeCount
+                        likeCount: result[0].likeCount,
+                        likedByCurrentUser: result[0].likedByCurrentUser,
+                        isRouteLiked:result[0].likedByCurrentUser
                     })
                 },
                 // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
@@ -266,6 +282,7 @@ class RouteTimeline extends React.Component{
                             authUserId: result.userId,
                             authAccessToken: result.access_token
                         })
+                        window.localStorage.setItem("accessToken", this.state.authAccessToken)
                         setViewedRoute();
                     },
                     (error) => {

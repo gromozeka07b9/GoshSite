@@ -54,6 +54,11 @@ const styles = {
         margin: 5,
         width:'32px',
         height:'32px'
+    },
+    avatarLogin: {
+        margin: 5,
+        width:'28px',
+        height:'28px'
     }
 };
 
@@ -68,12 +73,37 @@ class GridRoutesImgs extends React.Component {
             authAvatarImageUrl: "https://developers.google.com/identity/images/g-logo.png",
             authLoginText: navigator.language.includes("ru") ? "Войти" : "Login",
             authUserId: "",
-            authAccessToken: ""
+            authAccessToken: "",
+            usersProperties: []
         };
     }
 
     componentDidMount() {
+        
+        function fillUsersProperties(context, usersProperties){
+            let token = "";
+            const tokenValue = window.localStorage.getItem("accessToken");
+            if(tokenValue !== null) {
+                token = tokenValue;
+            }
+            if(token !== ""){
+                usersProperties.forEach(function(item){
+                    fetch("https://igosh.pro/api/account/" + item.userId, {
+                        method:"GET",
+                        headers:{'Content-Type':'application/json', 'Authorization': "Bearer " + token}
+                    }).then(res => res.json())
+                        .then((result) => {
+                            item.imgUrl = result.imgUrl;
+                        })
 
+
+                });
+                context.setState({
+                    usersProperties: usersProperties
+                });
+            }
+        }
+        
         fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=%5B0%2C999%5D")
             .then(res => res.json())
             .then(
@@ -82,6 +112,17 @@ class GridRoutesImgs extends React.Component {
                         isLoaded: true,
                         items: result
                     });
+                    var usersProperties = [];
+                    result.forEach(function(item, i, result){
+                        var founded = usersProperties.filter(el =>el.userId === item.creatorId);
+                        if(founded.length === 0){
+                            usersProperties.push({
+                                userId: item.creatorId
+                            })
+                        }
+                    });
+
+                    fillUsersProperties(this, usersProperties);
                 },
                 // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
                 // чтобы не перехватывать исключения из ошибок в самих компонентах.
@@ -96,7 +137,7 @@ class GridRoutesImgs extends React.Component {
     render() {
 
         const { classes } = this.props;
-        const { error, isLoaded, items } = this.state;
+        const { error, isLoaded, items, usersProperties } = this.state;
 
         function getShortName(creatorName) {
             var arr = creatorName.split(' ');
@@ -111,6 +152,14 @@ class GridRoutesImgs extends React.Component {
         function getShortDate(createDate) {
             var dt = new Date(createDate);
             return dt.toLocaleDateString();
+        }
+        
+        function getUserImgUrl(creatorId){
+            var found = usersProperties.filter(u=>u.userId === creatorId);
+            if(found.length > 0){
+                return found[0].imgUrl;
+            }
+            return "";
         }
         
         const failureGoogleAuth = (response) => {
@@ -174,8 +223,8 @@ class GridRoutesImgs extends React.Component {
                                 cookiePolicy={'single_host_origin'}
                                 isSignedIn={true}
                                 render={renderProps=>(
-                                    <Button onClick={renderProps.onClick} disabled={renderProps.disabled} variant={"text"} size={"small"}>
-                                        <Avatar id="avatarElement" alt="Avatar" src={this.state.authAvatarImageUrl} className={classes.avatar}>
+                                    <Button onClick={renderProps.onClick} disabled={renderProps.disabled}  size={"medium"} style={{fontSize:'x-small', marginRight:'0'}}>
+                                        <Avatar id="avatarElement" alt="Avatar" src={this.state.authAvatarImageUrl} className={classes.avatarLogin}>
                                         </Avatar>
                                         {this.state.authLoginText}
                                     </Button>
@@ -183,8 +232,8 @@ class GridRoutesImgs extends React.Component {
                             />
                         </Toolbar>                        
                     </AppBar>
-                    <Box display="flex" justifyContent="center" maxWidth="100%" height='220px' alignItems="center" margin='10px'>
-                        <div>
+                    <Box display="flex" justifyContent="center" width="100%" height="220px" alignItems="center" margin='0px'>
+                        <div style={{margin: "5px", position:"absolute"}} >
                             <Typography variant="body1" color="inherit" align='center'>
                                 Альбомы путешествий - фотографии, рассказы, советы, треки от тех, кто бывает в интересных местах.
                             </Typography>
@@ -210,7 +259,7 @@ class GridRoutesImgs extends React.Component {
                                         titlePosition="top"
                                         className={classes.titleBar}
                                         actionIcon={
-                                            <Avatar className={classes.avatar}>{getShortName(item.creatorName)}</Avatar>
+                                            <Avatar className={classes.avatar} src={getUserImgUrl(item.creatorId)}>{getShortName(item.creatorName)}</Avatar>
                                         }
                                         actionPosition="left"
                                     />
