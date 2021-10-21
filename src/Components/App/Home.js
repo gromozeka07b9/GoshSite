@@ -22,6 +22,7 @@ import GoogleLogin from 'react-google-login';
 import {
     isMobile, isSafari
 } from "react-device-detect";
+import MapboxGLMap from './MapboxGLMap.js'
 
 const styles = {
     root:{
@@ -104,7 +105,7 @@ class GridRoutesImgs extends React.Component {
             }
         }
         
-        fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=%5B0%2C999%5D")
+        fetch("http://localhost:31192/api/v2/public/routes?pageSize=1000&range=%5B0%2C999%5D")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -198,7 +199,8 @@ class GridRoutesImgs extends React.Component {
         }
 
         if (error) {
-            return <div>Ошибка: {error.message}</div>;
+            return <div>Ошибка: {error.message}
+            </div>;
         } else if (!isLoaded) {
             return <div>Загрузка...</div>;
         } else {
@@ -246,6 +248,9 @@ class GridRoutesImgs extends React.Component {
                                 </a>
                             </Box>
                         </div>
+                    </Box>
+                    <Box display="flex" justifyContent="center" width="100%" height="220px" alignItems="center" margin='0px'>
+                        <MapboxGLMap/>
                     </Box>
                     <Container className={classes.gridContainer}>
                         <GridList cellHeight={320} cols={isMobile ? 1 : 3} spacing={5} className={classes.gridList}>
