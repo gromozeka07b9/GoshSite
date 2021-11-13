@@ -4,18 +4,32 @@ const app = express();
 const fs = require("fs");
 const fetch = require('node-fetch');
 var cache = require('memory-cache');
+const {func} = require("prop-types");
 
-const pageTitleRu = "igosh.pro - Ваши впечатления от путешествий!"
-const pageTitleEn = "igosh.pro - Your impressions from traveling!"
-const descriptionRu = "Альбомы путешествий - фотографии, рассказы, советы, треки от тех, кто бывает в интересных местах. Расскажите друзьям о своем отпуске!"
-const descriptionEn = "Travel albums - images, stories, tricks and tracks from interested places. Tell your story friends from your vacation!"
+const pageTitleRu = "Создавайте маршруты, делитесь впечатлениями, блоги о путешествиях по всему миру!"
+const pageTitleEn = "Make your routes, share impressions, follow blogs about travel on whole world!"
+const keywordsRu = "маршруты, впечатления, блог, путешествия, фотографии, советы, делиться, узнать, как"
+const keywordsEn = "routes, impressions, blog, travel, image, tricks, share, know, how to"
+const descriptionRu = "Социальная сеть для путешественников. Альбомы путешествий - фотографии, рассказы, советы, треки от тех, кто бывает в интересных местах. Расскажите друзьям о своем отпуске!"
+const descriptionEn = "Social network for travellers. Travel albums - images, stories, tricks and tracks from interested places. Tell your story friends from your vacation!"
 const pathToIndex = path.join(__dirname, "build/index.html")
+const pathToFeed = path.join(__dirname, "build/feed.html")
 
-app.get("/home", (req, res) => {
-    console.log("home-------------------------")
+app.get("/sitemap.xml", (req, res) => {
+    console.log("sitemap-------------------------")
+    fs.readFile('sitemap.xml', 'utf8', function (err, data) {
+        if(err) return console.log(err);
+        res.send(data);
+    });
+})
+
+app.get("/feed", async (req, res) => {
+    console.log("feed-------------------------")
     let title = getTitleForLocale(req);
     let description = getDescriptionForLocale(req);
-    res.send(getUpdatedIndexForLocale(title, description))
+    let keywords = getKeywordsForLocale(req);
+    let routes = await getRoutesForLocale(req);
+    res.send(getUpdatedFeedForLocale(title, description, keywords, routes))
 })
 
 app.get("/", (req, res) => {
@@ -25,8 +39,8 @@ app.get("/", (req, res) => {
     res.send(getUpdatedIndexForLocale(title, description))
 })
 
-app.get("/routetimeline/*", (req, res) => {
-    console.log("routetimeline-----------------")
+app.get("/route/*", (req, res) => {
+    console.log("route-----------------")
     let routeId = req.params[0];
     if(routeId != null)
     {
@@ -61,21 +75,6 @@ app.get("/routetimeline/*", (req, res) => {
     }
 })
 
-/*function getDescriptionForLocale(req) {
-    let locale = req.headers["accept-language"]
-    let description = descriptionEn
-    if(locale != null){
-        console.log("locale request:" + locale)
-        if(locale.search("ru") !== -1){
-            description = descriptionRu
-            console.log("locale:ru")
-        }
-    } else{
-        console.log("locale: default")
-    }
-    return description;
-}*/
-
 function getDescriptionForLocale(req) {
     let locale = getLocale(req)
     let description = descriptionEn
@@ -83,6 +82,40 @@ function getDescriptionForLocale(req) {
         description = descriptionRu
     }
     return description;
+}
+
+function getKeywordsForLocale(req) {
+    let locale = getLocale(req)
+    let keywords = keywordsEn
+    if(locale === "ru"){
+        keywords = keywordsRu
+    }
+    return keywords;
+}
+
+async function getRoutesForLocale(req) {
+    //let locale = getLocale(req) //пока все маршруты на Русском
+    let routes = "";
+    let routesObj = [];
+    await fetch(`https://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,999]`)
+        .then(res => res.json())
+        .then((result) => {
+            if(result.length > 0){
+                routesObj.push("<ul>")
+                result.forEach(function (item, i){
+                    routesObj.push(`<li><a href='https://igosh.pro/route/${item.id}'>${item.name}. ${item.description}</a></li>`)
+                });
+                routesObj.push("</ul>")
+                routes = routesObj.join("");
+                console.log(routes);
+            } else{
+                console.log("routes not found");
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    return routes;
 }
 
 function getTitleForLocale(req) {
@@ -117,23 +150,61 @@ function getUpdatedIndexForLocale(pageTitle, description){
     return updated;
 }
 
+function getUpdatedFeedForLocale(pageTitle, description, keywords, routes){
+    let raw = fs.readFileSync(pathToFeed)
+    let updated = raw.toString().replace("__title__", `<title>${pageTitle}</title>`)
+    updated = updated.toString().replace("__description__", `<meta name="description" content="${description}" />`)
+    updated = updated.toString().replace("__keywords__", `<meta name="keywords" content="${keywords}" />`)
+    updated = updated.toString().replace("__h1title__", pageTitle)
+    updated = updated.toString().replace("__liRoutes__", routes)
+    updated = updated.toString().replace("__image__", `<meta property="og:image" content="https://igosh.pro/gallery/images/icon.png" />`)
+    return updated;
+}
+
 function updateRouteTimelineResource(res, routeName, routeDescription, routeImagename) {
     console.log(pathToIndex);
     const raw = fs.readFileSync(pathToIndex)
     let updated = raw.toString().replace("__title__", `<title>${routeName}</title>`)
     updated = updated.toString().replace("__description__", `<meta name="description" content="${routeDescription}" />`)
     updated = updated.toString().replace("__image__", `<meta property="og:image" content="../shared/${routeImagename}" />`)
+    console.log(updated);
     res.send(updated)
 }
 
 app.use(express.static(path.join(__dirname, "build")));
-app.get("*", (req, res) =>
-    {
-        res.sendFile(path.join(__dirname, "build/index.html"))
-    }
-);
 
 const port = process.env.PORT || 3000;
+
+function makeSitemap() {
+    let sitemapXml = [];
+    fetch(`https://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,999]`)
+        .then(res => res.json())
+        .then((result) => {
+            let routeName = "";
+            if(result.length > 0){
+                sitemapXml.push("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">")
+                let curDate = new Date().toISOString();
+                result.forEach(function (item, i){
+                    sitemapXml.push(`<url><loc>https://igosh.pro/route/${item.id}</loc><lastmod>${curDate}</lastmod><priority>1.0</priority></url>`)
+                });
+                sitemapXml.push("</urlset>")
+                fs.truncate('sitemap.xml', 0, function (err) {
+                    if (err) return console.log(err);
+                });
+                fs.appendFile('sitemap.xml', sitemapXml.join(""), function (err){
+                    if (err) return console.log(err);
+                })
+                console.log(sitemapXml.join(""));
+            } else{
+                console.log("routes not found");
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}
+
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
+    makeSitemap();
 })

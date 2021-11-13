@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import Container from "@material-ui/core/Container";
 import {makeStyles} from "@material-ui/core/styles";
-import GridListTile from "@material-ui/core/GridListTile";
 import Typography from "@material-ui/core/Typography";
 import GridList from "@material-ui/core/GridList";
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -83,7 +82,7 @@ PhotoItem.propTypes = {
     group: PT.string.isRequired
 };
 
-class RouteTimeline extends React.Component{
+class Route extends React.Component{
 
     constructor(props) {
         super(props);
@@ -107,19 +106,20 @@ class RouteTimeline extends React.Component{
 
     componentDidMount() {
         let token = "";
+        let requestInit = {
+            method:"GET",
+            headers:{'Content-Type':'application/json'},
+        }
         if(this.state.authAccessToken !== "")
         {
             token = this.state.authAccessToken;
         } else{
             const tokenValue = window.localStorage.getItem("accessToken");
             if(tokenValue !== null){
-                token = tokenValue;
+                requestInit.headers = {'Content-Type':'application/json', 'Authorization': "Bearer " + tokenValue}
             }
         }
-        fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,9]&filter={'id':'" + this.props.match.params.routeId + "'}", {
-            method:"GET",
-            headers:{'Content-Type':'application/json', 'Authorization': "Bearer " + token},
-        })
+        fetch("https://igosh.pro/api/v2/public/routes?pageSize=1000&range=[0,9]&filter={'id':'" + this.props.match.params.routeId + "'}")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -417,4 +417,4 @@ class RouteTimeline extends React.Component{
     }
 }
 
-export default withStyles(styles)(RouteTimeline);
+export default withStyles(styles)(Route);

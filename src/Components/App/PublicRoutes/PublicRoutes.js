@@ -7,7 +7,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import {makeStyles, withStyles} from '@material-ui/core/styles';
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import Box from '@material-ui/core/Box';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -62,7 +62,7 @@ const styles = {
     }
 };
 
-class GridRoutesImgs extends React.Component {
+class PublicRoutes extends React.Component {
     
     constructor(props) {
         super(props);
@@ -250,7 +250,7 @@ class GridRoutesImgs extends React.Component {
                     <Container className={classes.gridContainer}>
                         <GridList cellHeight={320} cols={isMobile ? 1 : 3} spacing={5} className={classes.gridList}>
                             {items.map((item) => (
-                                <GridListTile key={item.routeId} cols={item.cols || 1} component={Link} to={"/routetimeline/" + item.id} params={{name:item.name}}>
+                                <GridListTile key={item.routeId} cols={item.cols || 1} component={Link} to={"/route/" + item.id} params={{name:item.name}}>
 
                                     <img src={ item.imgFilename != null && item.imgFilename != "" ? "https://igosh.pro/shared/" + item.imgFilename : "https://igosh.pro/shared/" + item.firstImageName.replace(".jpg","_preview.jpg")} alt={item.name} />
 
@@ -293,6 +293,11 @@ class GridRoutesImgs extends React.Component {
             );
         }
     }
+
+    goToRoute(url) {
+        alert(url);
+        this.props.history.push(url)
+    }
 }
 
-export default withStyles(styles)(GridRoutesImgs);
+export default withStyles(styles)(PublicRoutes);
