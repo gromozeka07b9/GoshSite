@@ -14,6 +14,7 @@ const descriptionRu = "Социальная сеть для путешестве
 const descriptionEn = "Social network for travellers. Travel albums - images, stories, tricks and tracks from interested places. Tell your story friends from your vacation!"
 const pathToIndex = path.join(__dirname, "build/index.html")
 const pathToFeed = path.join(__dirname, "build/feed.html")
+const pathToRoute = path.join(__dirname, "build/route.html")
 
 app.get("/sitemap.xml", (req, res) => {
     console.log("sitemap-------------------------")
@@ -32,23 +33,26 @@ app.get("/feed", async (req, res) => {
     res.send(getUpdatedFeedForLocale(title, description, keywords, routes))
 })
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     console.log("/-------------------------")
     let title = getTitleForLocale(req);
     let description = getDescriptionForLocale(req);
-    res.send(getUpdatedIndexForLocale(title, description))
+    let keywords = getKeywordsForLocale(req);
+    let routes = await getRoutesForLocale(req);
+    res.send(getUpdatedFeedForLocale(title, description, keywords, routes))
 })
 
 app.get("/route/*", (req, res) => {
     console.log("route-----------------")
     let routeId = req.params[0];
+    let updatedResource = "";
     if(routeId != null)
     {
         console.log(routeId);
         let cachedRoute = cache.get(routeId) 
         if(cachedRoute != null){
             console.log(`${routeId} cache hit`)
-            updateRouteTimelineResource(res, cachedRoute.name, cachedRoute.description, cachedRoute.imgFilename ? cachedRoute.imgFilename : cachedRoute.firstImageName)
+            updatedResource = getUpdatedRouteResource(cachedRoute.name, cachedRoute.description, cachedRoute.imgFilename ? cachedRoute.imgFilename : cachedRoute.firstImageName)
         } else{
             fetch(`https://igosh.pro/api/v2/public/routes?pageSize=1&range=[0,1]&filter={"id":"${routeId}"}`)
                 .then(res => res.json())
@@ -65,14 +69,15 @@ app.get("/route/*", (req, res) => {
                     } else{
                         console.log("not found for:" + routeId);
                     }
-                    updateRouteTimelineResource(res, routeName, routeDescription, routeImage)
+                    updatedResource = getUpdatedRouteResource(routeName, routeDescription, routeImage)
                 })
                 .catch(error => {
                     console.log(error);
-                    updateRouteTimelineResource(res, pageTitleEn, "", "https://igosh.pro/gallery/images/icon.png")
+                    updatedResource =getUpdatedRouteResource(pageTitleEn, "", "https://igosh.pro/gallery/images/icon.png")
                 })
         }
     }
+    res.send(updatedResource);
 })
 
 function getDescriptionForLocale(req) {
@@ -107,7 +112,7 @@ async function getRoutesForLocale(req) {
                 });
                 routesObj.push("</ul>")
                 routes = routesObj.join("");
-                console.log(routes);
+                //console.log(routes);
             } else{
                 console.log("routes not found");
             }
@@ -142,38 +147,36 @@ function getLocale(req){
     return resultLocale;
 }
 
-function getUpdatedIndexForLocale(pageTitle, description){
+/*function getUpdatedIndexForLocale(pageTitle, description){
     let raw = fs.readFileSync(pathToIndex)
     let updated = raw.toString().replace("__title__", `<title>${pageTitle}</title>`)
     updated = updated.toString().replace("__description__", `<meta name="description" content="${description}" />`)
     updated = updated.toString().replace("__image__", `<meta property="og:image" content="https://igosh.pro/gallery/images/icon.png" />`)
     return updated;
-}
+}*/
 
 function getUpdatedFeedForLocale(pageTitle, description, keywords, routes){
-    let raw = fs.readFileSync(pathToFeed)
+    let raw = fs.readFileSync(pathToIndex)//ToDo:должен быть только index.html
     let updated = raw.toString().replace("__title__", `<title>${pageTitle}</title>`)
-    updated = updated.toString().replace("__description__", `<meta name="description" content="${description}" />`)
-    updated = updated.toString().replace("__keywords__", `<meta name="keywords" content="${keywords}" />`)
-    updated = updated.toString().replace("__h1title__", pageTitle)
-    updated = updated.toString().replace("__liRoutes__", routes)
-    updated = updated.toString().replace("__image__", `<meta property="og:image" content="https://igosh.pro/gallery/images/icon.png" />`)
+    updated = updated.replace("__description__", `<meta name="description" content="${description}" />`)
+    updated = updated.replace("__keywords__", `<meta name="keywords" content="${keywords}" />`)
+    updated = updated.replace("__h1title__", pageTitle)
+    updated = updated.replace("__liRoutes__", routes)
+    updated = updated.replace("__image__", `<meta property="og:image" content="https://igosh.pro/gallery/images/icon.png" />`)
+    //console.log(updated);
     return updated;
 }
 
-function updateRouteTimelineResource(res, routeName, routeDescription, routeImagename) {
-    console.log(pathToIndex);
-    const raw = fs.readFileSync(pathToIndex)
+function getUpdatedRouteResource(routeName, routeDescription, routeImagename) {
+    const raw = fs.readFileSync(pathToIndex)//ToDo:должен быть только index.html
     let updated = raw.toString().replace("__title__", `<title>${routeName}</title>`)
     updated = updated.toString().replace("__description__", `<meta name="description" content="${routeDescription}" />`)
     updated = updated.toString().replace("__image__", `<meta property="og:image" content="../shared/${routeImagename}" />`)
-    console.log(updated);
-    res.send(updated)
+    updated = updated.toString().replace("__h1title__", `${routeName}. ${routeDescription}`)
+    updated = updated.toString().replace("__liPoints__", `route points`)
+    //console.log(updated);
+    return updated;
 }
-
-app.use(express.static(path.join(__dirname, "build")));
-
-const port = process.env.PORT || 3000;
 
 function makeSitemap() {
     let sitemapXml = [];
@@ -204,7 +207,12 @@ function makeSitemap() {
         })
 }
 
+app.use(express.static(path.join(__dirname, "build")));
+
+const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
+    console.log("dirname:" + __dirname);
     console.log(`Server started on port ${port}`);
     makeSitemap();
 })
