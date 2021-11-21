@@ -12,7 +12,8 @@ import theme from './theme';
 
 // создаём кастомную историю
 const history = createBrowserHistory()
-
+document.getElementById('seoRoutes').remove();
+document.getElementById('seoRoutePoints').remove();
 ReactDOM.render((
         <ThemeProvider theme={theme}>
             <CssBaseline />

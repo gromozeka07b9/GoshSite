@@ -138,7 +138,7 @@ class PublicRoutes extends React.Component {
 
         const { classes } = this.props;
         const { error, isLoaded, items, usersProperties } = this.state;
-
+        
         function getShortName(creatorName) {
             var arr = creatorName.split(' ');
             if(arr.length > 1)
@@ -191,9 +191,6 @@ class PublicRoutes extends React.Component {
                     },
                     (error) => {
                         console.log(error);
-                        if(isMobile){
-                            alert(error.message);
-                        }
                     })
         }
 
@@ -232,14 +229,14 @@ class PublicRoutes extends React.Component {
                             />
                         </Toolbar>                        
                     </AppBar>
-                    <Box display="flex" justifyContent="center" width="100%" height="220px" alignItems="center" margin='0px'>
+                    <Box display="flex" justifyContent="center" width="100%" height="120px" alignItems="center" margin='0px'>
                         <div style={{margin: "5px", position:"absolute"}} >
-                            <Typography variant="body1" color="inherit" align='center'>
+                            {/*<Typography variant="body1" color="inherit" align='center'>
                                 Альбомы путешествий - фотографии, рассказы, советы, треки от тех, кто бывает в интересных местах.
                             </Typography>
                             <Typography variant="body1" color="inherit" align='center'>
                                 С помощью приложения вы можете рассказать друзьям о своем отпуске!
-                            </Typography>
+                            </Typography>*/}
                             <Box marginTop="10px" display='flex' width='100%' justifyContent='center' >
                                 <a href="https://play.google.com/store/apps/details?id=com.sd.gosh" style={isSafari ? {display:'none'} : {}}>
                                     <img src="https://igosh.pro/playgoogle.jpg" style={{verticalAlign:'middle'}} width="100px"/>
@@ -292,11 +289,6 @@ class PublicRoutes extends React.Component {
                 </div>
             );
         }
-    }
-
-    goToRoute(url) {
-        alert(url);
-        this.props.history.push(url)
     }
 }
 

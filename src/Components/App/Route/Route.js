@@ -166,7 +166,8 @@ class Route extends React.Component{
         let firstImgs = new Map();
         const { error, isLoaded, isRouteLoaded, route, items, dimensions } = this.state;
         const { classes } = this.props;
-        function getImgColumnCount(point) {
+        
+        /*function getImgColumnCount(point) {
             if(point.medias.length > 2 && point.medias.length%2 != 0){
                 if(!firstImgs.has(point))
                 {
@@ -176,7 +177,7 @@ class Route extends React.Component{
             }
 
             return 1;
-        }
+        }*/
 
         function getShortName(creatorName) {
             var arr = creatorName.split(' ');
@@ -188,13 +189,12 @@ class Route extends React.Component{
             return creatorName.substr(0,1);
         }
         
-        function getCellFullHeight() {
+        /*function getCellFullHeight() {
             return isMobile ? 500 : 800;
         }
         function getCellImgHeight() {
-            //alert(p);
             return isMobile ? 350 : 660;
-        }
+        }*/
 
         function getShortDate(createDate) {
             var dt = new Date(createDate);
@@ -203,6 +203,11 @@ class Route extends React.Component{
 
         function getDisplayForImg() {
             return isMobile ? "flow" : "flex";
+        }
+
+        function hideH1Title() {
+            var h1Title = document.getElementById('headerText');
+            h1Title.style.display = 'none';
         }
 
         function hideAppBar() {
@@ -303,7 +308,7 @@ class Route extends React.Component{
             </div>;
         } else
             return (
-                <div className={classes.root}>
+                <div className={classes.root} onLoad={hideH1Title()}>
                     <AppBar position={"fixed"} id='appBar' className={classes.appBar}>
                         <Toolbar variant="regular" className={classes.toolBar}>
                             <a href="..">
