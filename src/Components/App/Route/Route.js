@@ -131,6 +131,7 @@ class Route extends React.Component{
                         likedByCurrentUser: result[0].likedByCurrentUser,
                         isRouteLiked:result[0].likedByCurrentUser
                     })
+                    console.log(result)
                 },
                 // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
                 // чтобы не перехватывать исключения из ошибок в самих компонентах.
@@ -139,6 +140,7 @@ class Route extends React.Component{
                         isRouteLoaded: true,
                         error
                     });
+                    console.log(error)
                 }
             )
         
@@ -256,7 +258,6 @@ class Route extends React.Component{
                         },
                         (error) => {
                             console.log(error);
-                            alert("error");
                         })
             }
         }
