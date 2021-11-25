@@ -6,10 +6,10 @@ const fetch = require('node-fetch');
 var cache = require('memory-cache');
 const {func} = require("prop-types");
 
-const pageTitleRu = "Создавайте маршруты с GoSh!, делитесь впечатлениями, публикуйте блоги о путешествиях по всему миру!"
-const pageTitleEn = "With GoSh! you make routes, share impressions, follow blogs about travel on whole world!"
-const keywordsRu = "маршруты, впечатления, блог, путешествия, фотографии, советы, делиться, узнать, как"
-const keywordsEn = "routes, impressions, blog, travel, image, tricks, share, know, how to"
+const pageTitleRu = "Создавайте маршруты с Гош, делитесь впечатлениями, публикуйте блоги о путешествиях по всему миру!"
+const pageTitleEn = "With GoSh you make routes, share impressions, follow blogs about travel on whole world!"
+const keywordsRu = "гош,gosh,соцсеть,маршруты,впечатления,блог,путешествия,рассказы,фото,турист,поход,горы,города,советы,делиться,узнать,как,добраться,бесплатно,интересные места,редкие,freekin"
+const keywordsEn = "gosh,social network,routes,impressions,blog,travel,stories,photos,tourist,hike,mountains,cities,tips,share,learn how,get there,for free,interesting places,rare,freekin"
 const descriptionRu = "Социальная сеть для путешественников. Альбомы путешествий - фотографии, рассказы, советы, треки от тех, кто бывает в интересных местах. Расскажите друзьям о своем отпуске!"
 const descriptionEn = "Social network for travellers. Travel albums - images, stories, tricks and tracks from interested places. Tell your story friends from your vacation!"
 const rootH1TitleRu = "Приветствую вас в GoSh! Здесь вы можете посмотреть альбомы путешествий, маршруты, фотографии и советы. И конечно, можете поделиться своими впечатлениями от отпуска! Проект некоммерческий."
@@ -162,7 +162,7 @@ function getTitleForLocale(req) {
 
 function getLocale(req){
     let locale = req.headers["accept-language"]
-    let resultLocale = "en";
+    let resultLocale = "ru";
     if(locale != null){
         console.log("locale request:" + locale)
         if(locale.search("ru") !== -1){
